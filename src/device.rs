@@ -780,6 +780,12 @@ impl<EpType: BulkOrInterrupt, Dir: EndpointDirection> Endpoint<EpType, Dir> {
         }
     }
 
+    pub async fn transfer(&mut self, buf: Buffer) -> Completion {
+        assert!(self.pending() == 0, "a transfer is already pending");
+        self.submit(buf);
+        self.next_complete().await
+    }
+
     /// Clear the endpoint's halt / stall condition.
     ///
     /// Sends a `CLEAR_FEATURE` `ENDPOINT_HALT` control transfer to tell the

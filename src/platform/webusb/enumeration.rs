@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use wasm_bindgen_futures::{js_sys::Array, wasm_bindgen::JsCast, JsFuture};
+use wasm_bindgen_futures::JsFuture;
 use web_sys::UsbDevice;
 
 use crate::{
@@ -21,11 +21,8 @@ pub fn list_devices() -> impl MaybeFuture<Output = Result<impl Iterator<Item = D
             Error::new(ErrorKind::Other, "WebUSB devices could not be listed")
         })?;
 
-        let devices: Array = JsCast::unchecked_from_js(devices);
-
         let mut result = vec![];
         for device in devices {
-            let device: UsbDevice = JsCast::unchecked_from_js(device);
             JsFuture::from(device.open()).await.map_err(|e| {
                 log::error!("WebUSB device could not be opened: {e:?}");
                 Error::new(ErrorKind::Other, "WebUSB device could not be opened")

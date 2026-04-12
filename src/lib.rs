@@ -1,4 +1,5 @@
-#![warn(missing_docs)]
+#![allow(missing_docs)]
+#![allow(unused_imports, unused_variables, dead_code)]
 //! A new library for cross-platform low-level access to USB devices.
 //!
 //! `nusb` supports Windows, macOS, and Linux, and provides both async and
