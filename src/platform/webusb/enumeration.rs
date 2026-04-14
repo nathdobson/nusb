@@ -44,6 +44,24 @@ pub fn list_devices() -> impl MaybeFuture<Output = Result<impl Iterator<Item = D
     ActualFuture::new(async move { Ok(inner().await?.into_iter()) })
 }
 
+pub async fn device_from_wasm(wasm: UsbDevice) -> Result<DeviceInfo, Error> {
+    let usb = super::usb()?;
+
+    JsFuture::from(device.open()).await.map_err(|e| {
+        log::error!("WebUSB device could not be opened: {e:?}");
+        Error::new(ErrorKind::Other, "WebUSB device could not be opened")
+    })?;
+
+    let device = Arc::new(UniqueUsbDevice::new(device));
+
+    let device_info = device_to_info(device.clone()).await?;
+    result.push(device_info);
+    JsFuture::from(device.close()).await.map_err(|e| {
+        log::error!("WebUSB device could not be closed: {e:?}");
+        Error::new(ErrorKind::Other, "WebUSB device could not be closed")
+    })?;
+}
+
 pub fn list_buses() -> impl MaybeFuture<Output = Result<impl Iterator<Item = BusInfo>, Error>> {
     Ready(Ok(vec![].into_iter()))
 }

@@ -7,7 +7,7 @@ use std::io::Error;
 
 pub(crate) use transfer::TransferData;
 
-pub use enumeration::{device_info_from_webusb, list_buses, list_devices};
+pub use enumeration::{device_info_from_webusb, list_buses, list_devices, device_from_wasm};
 
 pub(crate) use device::UniqueUsbDevice;
 pub(crate) use device::WebusbDevice as Device;
