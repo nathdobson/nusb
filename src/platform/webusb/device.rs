@@ -537,15 +537,6 @@ impl WebusbEndpoint {
                     let array_obj = Object::try_from(&array).expect("an object");
                     let endpoint_number = address;
 
-                    web_sys::console::log_1(
-                        &format!(
-                            "WebUSB: transfer_out endpoint={} len={}",
-                            endpoint_number,
-                            data.len()
-                        )
-                        .into(),
-                    );
-
                     let transfer_future = match device
                         .device
                         .device
@@ -569,15 +560,6 @@ impl WebusbEndpoint {
 
                     match transfer_future.await {
                         Ok(transfer_result) => {
-                            web_sys::console::log_1(
-                                &format!(
-                                    "WebUSB: transfer_out success, status={:?} bytes_written={}",
-                                    transfer_result.status(),
-                                    transfer_result.bytes_written()
-                                )
-                                .into(),
-                            );
-
                             unsafe {
                                 (*ptr).status = transfer_result.status();
                                 (*ptr).actual_len = transfer_result.bytes_written();
@@ -600,14 +582,6 @@ impl WebusbEndpoint {
                     // For IN transfers, use requested_len (not data.len() which is 0)
                     let requested_len = buffer.requested_len;
 
-                    web_sys::console::log_1(
-                        &format!(
-                            "WebUSB: transfer_in endpoint={} len={}",
-                            endpoint_number, requested_len
-                        )
-                        .into(),
-                    );
-
                     match JsFuture::from(
                         device
                             .device
@@ -624,15 +598,6 @@ impl WebusbEndpoint {
                                     .buffer(),
                             );
                             let actual_len = received_data.length();
-
-                            web_sys::console::log_1(
-                                &format!(
-                                    "WebUSB: transfer_in success, status={:?} actual_len={}",
-                                    transfer_result.status(),
-                                    actual_len
-                                )
-                                .into(),
-                            );
 
                             unsafe {
                                 (*ptr).status = transfer_result.status();
