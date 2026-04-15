@@ -4,15 +4,15 @@ use std::{
     time::Duration,
 };
 
+use crate::{
+    transfer::{Buffer, BulkOrInterrupt, In, TransferError},
+    Endpoint,
+};
+use log::info;
 #[cfg(any(feature = "tokio", feature = "smol"))]
 use std::{
     pin::Pin,
     task::{ready, Context, Poll},
-};
-
-use crate::{
-    transfer::{Buffer, BulkOrInterrupt, In, TransferError},
-    Endpoint,
 };
 
 /// Wrapper for a Bulk or Interrupt IN [`Endpoint`](crate::Endpoint) that

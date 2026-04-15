@@ -500,6 +500,7 @@ impl WebusbEndpoint {
     }
 
     pub(crate) fn cancel_all(&mut self) {
+        todo!();
         // Cancel transfers in reverse order to ensure subsequent transfers
         // can't complete out of order while we're going through them.
         // TODO: Implement cancelling.

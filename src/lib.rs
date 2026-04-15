@@ -327,3 +327,8 @@ pub fn device_info_from_webusb(
 pub fn watch_devices() -> Result<hotplug::HotplugWatch, Error> {
     Ok(hotplug::HotplugWatch(platform::HotplugWatch::new()?))
 }
+
+#[cfg(target_family = "wasm")]
+pub async fn device_info_from_wasm(device: web_sys::UsbDevice) -> Result<DeviceInfo, Error> {
+    Ok(platform::device_info_from_wasm(device).await?)
+}
