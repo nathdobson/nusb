@@ -3,11 +3,11 @@ mod enumeration;
 mod hotplug;
 mod transfer;
 
-use std::io::Error;
+use std::io::{Error, ErrorKind};
 
 pub(crate) use transfer::TransferData;
 
-pub use enumeration::{device_info_from_webusb, list_buses, list_devices, device_info_from_wasm};
+pub use enumeration::{device_info_from_wasm, device_info_from_webusb, list_buses, list_devices};
 
 pub(crate) use device::UniqueUsbDevice;
 pub(crate) use device::WebusbDevice as Device;
@@ -75,7 +75,10 @@ pub(crate) fn usb() -> Result<Usb, Error> {
     let window = js_sys::global().dyn_into::<Window>().ok();
 
     if let Some(window) = window {
-        return Ok(window.navigator().usb());
+        return Ok(window.navigator().usb().ok_or(Error::new(
+            ErrorKind::Unsupported,
+            "Web bluetooth not supported",
+        ))?);
     }
 
     let wgs = js_sys::global().dyn_into::<WorkerGlobalScope>().ok();
