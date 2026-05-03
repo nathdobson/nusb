@@ -343,7 +343,7 @@ impl MacDevice {
         let res = unsafe {
             call_iokit_function!(
                 self.device.raw,
-                DeviceRequestAsyncTO(&mut req, transfer_callback, ptr as *mut c_void)
+                DeviceRequestAsyncTO(&mut req, Some(transfer_callback), ptr as *mut c_void)
             )
         };
 
@@ -480,8 +480,9 @@ impl MacInterface {
 
 impl Drop for MacInterface {
     fn drop(&mut self) {
+        // Expected to fail with kIOReturnNoDevice when the device is disconnected and can be ignored
         if let Err(err) = self.interface.close() {
-            error!("Failed to close interface: {err}")
+            debug!("Failed to close interface: {err:x}")
         }
         self.device
             .claimed_interfaces
@@ -564,7 +565,7 @@ impl MacEndpoint {
                         self.inner.pipe_ref,
                         buf_ptr as *mut c_void,
                         req_len,
-                        transfer_callback,
+                        Some(transfer_callback),
                         ptr as *mut c_void
                     )
                 ),
@@ -574,7 +575,7 @@ impl MacEndpoint {
                         self.inner.pipe_ref,
                         buf_ptr as *mut c_void,
                         req_len,
-                        transfer_callback,
+                        Some(transfer_callback),
                         ptr as *mut c_void
                     )
                 ),
